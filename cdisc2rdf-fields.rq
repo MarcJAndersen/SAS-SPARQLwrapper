@@ -1,0 +1,26 @@
+PREFIX mms: <http://rdf.cdisc.org/mms#> 
+PREFIX sdtm: <http://rdf.cdisc.org/sdtm-1-2/std#> 
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#> 
+PREFIX sdtmigs: <http://rdf.cdisc.org/sdtmig-3-1-2/schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX sdtms: <http://rdf.cdisc.org/sdtm-1-2/schema#>
+PREFIX sdtmct: <http://rdf.cdisc.org/sdtm/ct#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT *
+WHERE { 
+?s rdf:type mms:DataElement.
+OPTIONAL {
+?s mms:dataElementLabel ?label. }
+OPTIONAL { ?s mms:dataElementName ?variable. }
+OPTIONAL { ?s mms:ordinal ?ordinal. }
+OPTIONAL { ?s mms:context ?context. }
+OPTIONAL { ?s mms:dataElementDescription ?description. }
+OPTIONAL { ?s sdtms:dataElementRole ?role. }
+OPTIONAL { ?s mms:broader ?broader. }
+OPTIONAL { ?s sdtmigs:references ?references. }
+OPTIONAL { ?s sdtms:dataElementCompliance ?compliance. }
+}

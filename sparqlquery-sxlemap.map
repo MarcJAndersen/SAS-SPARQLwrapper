@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SXLEMAP name="SPARQL" version="2.1">
+
+    <NAMESPACES count="2">
+        <NS id="1" prefix="">http://www.w3.org/2005/sparql-results#</NS>
+        <NS id="2" prefix="xsi">http://www.w3.org/2001/XMLSchema-instance</NS>
+    </NAMESPACES>
+
+  <!-- ############################################################ -->
+    <TABLE description="variable" name="variable">
+        <TABLE-PATH syntax="XPathENR">/{1}sparql/{1}head/{1}variable</TABLE-PATH>
+
+        <COLUMN class="ORDINAL" name="variable_ORDINAL">
+            <INCREMENT-PATH beginend="BEGIN" syntax="XPathENR">/{1}sparql/{1}head/{1}variable</INCREMENT-PATH>
+            <TYPE>numeric</TYPE>
+            <DATATYPE>integer</DATATYPE>
+        </COLUMN>
+
+        <COLUMN name="name">
+            <PATH syntax="XPathENR">/{1}sparql/{1}head/{1}variable/@name</PATH>
+            <TYPE>character</TYPE>
+            <DATATYPE>string</DATATYPE>
+            <LENGTH>32</LENGTH>
+        </COLUMN>
+
+    </TABLE>
+
+    <!-- ############################################################ -->
+    <TABLE description="binding" name="binding">
+        <TABLE-PATH syntax="XPathENR">/{1}sparql/{1}results/{1}result/{1}binding</TABLE-PATH>
+
+        <COLUMN class="ORDINAL" name="binding_cnt">
+            <INCREMENT-PATH beginend="BEGIN" syntax="XPathENR">/{1}sparql/{1}results/{1}result</INCREMENT-PATH>
+            <TYPE>numeric</TYPE>
+            <DATATYPE>integer</DATATYPE>
+        </COLUMN>
+
+        <COLUMN class="ORDINAL" name="binding_ORDINAL">
+            <INCREMENT-PATH beginend="BEGIN" syntax="XPathENR">/{1}sparql/{1}results/{1}result/{1}binding</INCREMENT-PATH>
+            <TYPE>numeric</TYPE>
+            <DATATYPE>integer</DATATYPE>
+        </COLUMN>
+
+        <COLUMN name="name">
+            <PATH syntax="XPathENR">/{1}sparql/{1}results/{1}result/{1}binding/@name</PATH>
+            <TYPE>character</TYPE>
+            <DATATYPE>string</DATATYPE>
+            <LENGTH>32</LENGTH>
+        </COLUMN>
+
+        <COLUMN name="uri">
+            <PATH syntax="XPathENR">/{1}sparql/{1}results/{1}result/{1}binding/{1}uri</PATH>
+            <TYPE>character</TYPE>
+            <DATATYPE>string</DATATYPE>
+            <LENGTH>32000</LENGTH>
+        </COLUMN>
+
+    </TABLE>
+
+    <!-- ############################################################ -->
+    <TABLE description="literal" name="literal">
+        <TABLE-PATH syntax="XPathENR">/{1}sparql/{1}results/{1}result/{1}binding/{1}literal</TABLE-PATH>
+
+        <COLUMN class="ORDINAL" name="binding_cnt">
+            <INCREMENT-PATH beginend="BEGIN" syntax="XPathENR">/{1}sparql/{1}results/{1}result</INCREMENT-PATH>
+            <TYPE>numeric</TYPE>
+            <DATATYPE>integer</DATATYPE>
+        </COLUMN>
+
+        <COLUMN class="ORDINAL" name="binding_ORDINAL">
+            <INCREMENT-PATH beginend="BEGIN" syntax="XPathENR">/{1}sparql/{1}results/{1}result/{1}binding</INCREMENT-PATH>
+            <TYPE>numeric</TYPE>
+            <DATATYPE>integer</DATATYPE>
+        </COLUMN>
+
+        <COLUMN class="ORDINAL" name="literal_ORDINAL">
+            <INCREMENT-PATH beginend="BEGIN" syntax="XPathENR">/{1}sparql/{1}results/{1}result/{1}binding/{1}literal</INCREMENT-PATH>
+            <TYPE>numeric</TYPE>
+            <DATATYPE>integer</DATATYPE>
+        </COLUMN>
+
+        <COLUMN name="lang">
+            <PATH syntax="XPathENR">/{1}sparql/{1}results/{1}result/{1}binding/{1}literal/@lang</PATH>
+            <TYPE>character</TYPE>
+            <DATATYPE>string</DATATYPE>
+            <LENGTH>2</LENGTH>
+        </COLUMN>
+
+        <COLUMN name="datatype">
+            <PATH syntax="XPathENR">/{1}sparql/{1}results/{1}result/{1}binding/{1}literal/@datatype</PATH>
+            <TYPE>character</TYPE>
+            <DATATYPE>string</DATATYPE>
+            <LENGTH>64</LENGTH>
+        </COLUMN>
+
+        <COLUMN name="literal">
+            <PATH syntax="XPathENR">/{1}sparql/{1}results/{1}result/{1}binding/{1}literal</PATH>
+            <TYPE>character</TYPE>
+            <DATATYPE>string</DATATYPE>
+            <LENGTH>32000</LENGTH>
+        </COLUMN>
+
+    </TABLE>
+
+</SXLEMAP>
