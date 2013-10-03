@@ -3,7 +3,9 @@
 Introduction
 ===========
 
-This is a SAS macro to perform a SPARQL query to a SPARQL service. The macro returns the results as a SAS dataset.
+This is a SAS macro to perform a SPARQL query to a SPARQL service. 
+
+The macro returns the results as a SAS dataset.
 
 The macro is inspired by the python "SPARQLWrapper 1.5.2" (https://pypi.python.org/pypi/SPARQLWrapper), and the R "SPARQL: SPARQL client" (http://cran.r-project.org/web/packages/SPARQL/index.html).
 
@@ -43,7 +45,8 @@ Required Arguments
   Example: http://dbpedia.org/sparql
 
 `query=<sparql-query>` is SPARQL query as %str macro quoted text. Use of query implies `querymethod=queryGET`
-  Example:
+  
+  xample:
    `query=%str(
      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
      SELECT ?label
@@ -60,9 +63,9 @@ Optional Arguments
 
 `sparqlquerysxlemap=%str(sparqlquery-sxlemap.map)` is the XML MAP file for the SAS XMLV2 enginen. The file `sparqlquery-sxlemap.map` must be present, and is provided here.
 
-`debug=< Y | N >` is either `Y` for printing much information or `N` for no debug information. The default is no debug information `N`
+`debug=Y|N` is either `Y` for printing much information or `N` for no debug information. The default is no debug information `N`
 
-`debug_nohttp=< Y | N >` is either `N` for invoking PROC HTTP or `N` for re-using the existing temporary file name, which is usefull for debiuggin input of the XML file without calling the SPARQL Protocol Service. The default is `N`, ie calling the endpoint.
+`debug_nohttp=Y|N` is either `N` for invoking PROC HTTP or `N` for re-using the existing temporary file name, which is usefull for debiuggin input of the XML file without calling the SPARQL Protocol Service. The default is `N`, ie calling the endpoint.
 
 Examples 
 ========
