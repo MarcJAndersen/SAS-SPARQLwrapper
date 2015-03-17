@@ -16,4 +16,6 @@ SELECT * WHERE {
 ?subject rdfs:comment ?abstract.
 ?subject dbpedia-owl:populationTotal ?population.
 FILTER (lang(?label) = "en" && lang(?abstract) = "en")
-} LIMIT 20
+}
+LIMIT 20
+
