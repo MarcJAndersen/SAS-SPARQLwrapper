@@ -1,0 +1,8 @@
+*.sas~
+*.log
+*.lst
+*.rq~
+*.map~
+*.md~
+*.txt
+*.xml

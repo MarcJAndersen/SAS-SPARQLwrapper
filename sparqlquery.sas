@@ -48,7 +48,8 @@ run;
 data _null_;
    file hdrin;
    length textline $200;
-   textline="Accept: application/rdf+xml";
+/*   textline="Accept: application/rdf+xml";*/
+   textline="Accept: application/sparql-results+xml"; /* Fuseki 2.0 MJA 2015-04-16  */
    ltextlen=length(textline);
    put textline $varying. ltextlen;
 run;
@@ -79,7 +80,8 @@ filename sqarqlqu "&queryfile.";
 data _null_;
    file hdrin;
    length textline $200;
-   textline="Accept: application/rdf+xml";
+/*   textline="Accept: application/rdf+xml"; */
+   textline="Accept: application/sparql-results+xml"; /* Fuseki 2.0 MJA 2015-04-16  */
    ltextlen=length(textline);
    put textline $varying. ltextlen;
 run;
