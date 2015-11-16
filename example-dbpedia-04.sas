@@ -2,7 +2,12 @@
 ** Program : example-dbpedia-04.sas
 ** Purpose : Basic test of SAS-SPARQLwrapper
 ** Endpoint: dbpedia    
-** Notes: SAS must be invoked with unicode support   
+** Notes: SAS must be invoked with unicode support
+          ========================================
+          From explorer window right-click and select
+          Batch submit with SAS 9.4 (UTF8)
+          ========================================
+    
 ** Status: ok    
 \*------------------------------------------------------------------------*/
 
