@@ -174,6 +174,203 @@ data filetext;
 run;
 %end;
 
+%sparqlresult()
+
+%IF %qupcase(&debug)=%qupcase(Y) %then %do;
+title2 "&resultdsn.";    
+proc print data=&resultdsn. width=min;
+run;
+%end;
+
+
+%MEND;
+
+
+%MACRO sparqlupdate(
+endpoint=,
+update=,
+updatefile=,
+resultdsn=,
+updatemethod=updatePOST,
+sparqlquerysxlemap=%str(sparqlquery-sxlemap.map),
+debug=N,
+debug_nohttp=N    
+    );
+
+%local tempnamestem;
+%let tempnamestem=temp-sparqlupdate;
+%local urlparam;
+
+filename sqresult "&tempnamestem..xml";
+filename hdrout "&tempnamestem.-headerOut.txt";
+
+%if %qupcase(&debug_nohttp)=%qupcase(N) %then %do;
+/* Clear output file by writing dummy text" */
+data _null_;
+    length nothing $200;
+    nothing=catx(" ", "Nothing here at", put(datetime(),E8601DT19.));
+    file sqresult;
+    put nothing :;
+    file hdrout;
+    put nothing :;
+run;
+%end;    
+
+
+%if %length(&update)>0 and %qupcase(&updatemethod)=%qupcase(updatePOST) %then %do;
+filename hdrin "&tempnamestem.-headerIn.txt";
+filename sqarqlqu "&tempnamestem..txt";
+data filetext;
+   file sqarqlqu TERMSTR=CR;
+   length textline $32000;
+   textline=symget("update");
+   textlen=length(textline);
+   put textline $varying. textlen ;
+run;
+
+data _null_;
+   file hdrin;
+   length textline $200;
+/*   textline="Accept: application/rdf+xml";*/
+   textline="Accept: application/sparql-results+xml"; /* Fuseki 2.0 MJA 2015-04-16  */
+   ltextlen=length(textline);
+   put textline $varying. ltextlen;
+run;
+
+%if %qupcase(&debug_nohttp)=%qupcase(N) %then %do;
+proc http
+    in=sqarqlqu
+    out=sqresult
+    url="&endpoint."
+    method="post"
+    headerin=hdrin  
+    headerout=hdrout
+    ct="application/sparql-update" 
+;
+run;
+%end;
+
+%end;
+
+
+
+%if %length(&update)=0  and %length(&updatefile)>0 and %qupcase(&updatemethod)=%qupcase(updatePOST) %then %do;
+
+filename hdrin "&tempnamestem.-headerIn.txt";
+
+filename sqarqlqu "&updatefile.";
+
+data _null_;
+   file hdrin;
+   length textline $200;
+/*   textline="Accept: application/rdf+xml"; */
+   textline="Accept: application/sparql-results+xml"; /* Fuseki 2.0 MJA 2015-04-16  */
+   ltextlen=length(textline);
+   put textline $varying. ltextlen;
+run;
+
+%if %qupcase(&debug_nohttp)=%qupcase(N) %then %do;
+proc http
+    in=sqarqlqu
+    out=sqresult
+    url="&endpoint."
+    method="post"
+    headerin=hdrin  
+    headerout=hdrout
+    ct="application/sparql-update" 
+;
+run;
+%end;
+
+%end;
+
+%if %length(&update)>0 and %qupcase(&updatemethod)=%qupcase(updateGET) %then %do;
+%let urlparam=;
+data _null_;
+   length paramtext $32000;
+   paramtext=urlencode(symget("update"));
+   call symputx("urlparam", translate(strip(paramtext),'%2B',"+"));
+run;
+
+%if %qupcase(&debug_nohttp)=%qupcase(N) %then %do;
+proc http
+    out=sqresult
+    url="&endpoint.?update=%superq(urlparam)%nrstr(&)%nrstr(output=xml)"
+    method="get"
+    headerout=hdrout
+;
+run;
+%end;
+
+%end;
+
+%if %length(&update)=0 and %length(&updatefile)>0 and %qupcase(&updatemethod)=%qupcase(updateGET) %then %do;
+
+%let urlparam=;
+data _null_;
+   length paramtext $32000;
+   retain paramtext " ";
+
+   infile "&updatefile." length=ltextlen end=AllDone;
+
+   length textline $200;
+   input textline $varying. ltextlen;
+   textlen=ltextlen;
+
+   if textlen=0 then do;
+       paramtext=cats(paramtext, urlencode("0a0d"x));
+       end;
+   else do;
+       paramtext=catx(urlencode("0a0d"x),paramtext,urlencode(substr(textline,1,textlen)));
+   end;
+    
+   if alldone then do;
+      call symputx("urlparam", translate(strip(paramtext),'%2B',"+"));
+   end;
+run;
+
+proc http
+    out=sqresult
+    url="&endpoint.?update=%superq(urlparam)%nrstr(&)%nrstr(output=xml)"
+    method="get"
+    headerout=hdrout
+;
+run;
+
+%end;
+
+%sparqlresult()
+    
+%IF %qupcase(&debug)=%qupcase(Y) %then %do;
+data filetext;
+   infile hdrout length=ltextlen;
+   length textline $200;
+   input textline $varying. ltextlen;
+   textlen=ltextlen;
+   putlog textline $varying. ltextlen;
+run;
+
+data filetext;
+   infile sqresult length=ltextlen;
+   length textline $200;
+   input textline $varying. ltextlen;
+   textlen=ltextlen;
+   putlog textline $varying. ltextlen;
+run;
+%end;
+
+%IF %qupcase(&debug)=%qupcase(Y) %then %do;
+title2 "&resultdsn.";    
+proc print data=&resultdsn. width=min;
+run;
+%end;
+
+
+
+%MEND;
+
+%MACRO sparqlresult(dummy=);
+    
 /* MJA 2013-07-25
    Here is used a fixed map for SAS XML input.
    I have a hunch that the map could be generated from the xlm file to
@@ -216,11 +413,23 @@ run;
 
 %end;
 
+    data binding1;
+        set SQRESULT.binding;
+    putlog "1@@@@ " name=;
+    name= translate(strip(name),"_","-"); /*maybe use other method, like replace - with _ etc */
+    putlog "2@@@@ " name=;
+    run;
+    
 data variable1;
     set sqresult.variable;
     length var_datatype $64;
     var_datatype=" ";
     max_length=0;
+    putlog "1@@@@ " name=;
+    name= translate(strip(name),"_","-"); /*maybe use other method, like replace - with _ etc */
+    putlog "2@@@@ " name=;
+    
+
 run;
 
 /* go through all records and determine datatype and maximal
@@ -240,7 +449,7 @@ data sq;
         
     merge
         sqresult.literal
-        sqresult.binding
+        binding1
         end=AllDone
         ;
     by binding_CNT binding_ORDINAL;
@@ -263,8 +472,10 @@ data sq;
         end;
 
     keep binding_CNT name valuetext;
+/*
     keep valuetextlang;
-
+    */
+    
     rc=variable.find();
     if rc ne 0 then do;
         putlog name= " unexpected name";
@@ -306,7 +517,7 @@ run;
 %end;
 
 /* This could also be stored in a hash and combined in the step above */
-data work.variable2;
+data work.variable3;
     set work.variable2;
     length var_informat $33 var_type $1;
     select;
@@ -328,9 +539,9 @@ run;
 
 
 %local dsid rc;
-%let dsid=%sysfunc(open(work.variable2,i)); 
+%let dsid=%sysfunc(open(work.variable3,i)); 
 %if (&dsid = 0) %then %do;
-     %put sparqlquery: Unexpected problem;
+     %put sparqlresult: Unexpected problem;
      %put %sysfunc(sysmsg());
      %end;
 %else %do;
@@ -410,13 +621,4 @@ drop %unquote(%trim(&name.)_c);
 * can be ignored. ;
 * *******************************************************************;         
 
-
-%IF %qupcase(&debug)=%qupcase(Y) %then %do;
-title2 "&resultdsn.";    
-proc print data=&resultdsn. width=min;
-run;
-%end;
-
-
 %MEND;
-
