@@ -338,6 +338,9 @@ data sq;
         end;
         otherwise do;
            putlog name= var_datatype= valuetexttype= " unexpected more than one datatype";
+           putlog " setting type to string";
+           var_datatype="http://www.w3.org/2001/XMLSchema#string";
+           variable.replace();
         end;
         end;
 
