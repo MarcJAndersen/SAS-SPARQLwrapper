@@ -179,7 +179,8 @@ run;
 %IF %qupcase(&debug)=%qupcase(Y) %then %do;
 title2 "&resultdsn.";    
 proc print data=&resultdsn. width=min;
-run;
+        run;
+title2;
 %end;
 
 
@@ -363,6 +364,7 @@ run;
 title2 "&resultdsn.";    
 proc print data=&resultdsn. width=min;
 run;
+title2;
 %end;
 
 
@@ -375,7 +377,7 @@ run;
    Here is used a fixed map for SAS XML input.
    I have a hunch that the map could be generated from the xlm file to
    get the rectangular dataset directly. So, the approach below
-   rearraning the dataset to obtain a rectangular dataset may be made
+   rearranging the dataset to obtain a rectangular dataset may be made
    in a more straighforward way.
     */
     
@@ -410,21 +412,22 @@ run;
 
 proc print data=sqresult.literal width=min; 
 run;
+title2;
 
 %end;
 
-    data binding1;
-        set SQRESULT.binding;
+data binding1;
+    set SQRESULT.binding;
     putlog "1@@@@ " name=;
     name= translate(strip(name),"_","-"); /*maybe use other method, like replace - with _ etc */
     putlog "2@@@@ " name=;
-    run;
+run;
     
 data variable1;
     set sqresult.variable;
     length var_datatype $64;
     var_datatype=" ";
-    max_length=0;
+    max_length=1; /* default length for character of 1 character - to handle no records in result */
     putlog "1@@@@ " name=;
     name= translate(strip(name),"_","-"); /*maybe use other method, like replace - with _ etc */
     putlog "2@@@@ " name=;
@@ -445,6 +448,9 @@ data sq;
        variable.defineKey('name');
        variable.defineData(all: "YES");
        variable.defineDone();
+       /* make empty dataset - way of handling the case with no records in result */
+       variable.output(dataset:"work.variable2");    
+
        end;
         
     merge
@@ -516,7 +522,7 @@ proc print data=work.variable2 width=min;
 run;
 %end;
 
-/* This could also be stored in a hash and combined in the step above */
+/* This could also be stored in a hash or made as a format and combined in the step above */
 data work.variable3;
     set work.variable2;
     length var_informat $33 var_type $1;
